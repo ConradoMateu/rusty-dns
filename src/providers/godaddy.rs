@@ -44,7 +44,14 @@ impl GoDaddyProvider {
         name: String,
         ttl: u32,
     ) -> Self {
-        Self::with_base_url(api_key, api_secret, domain, name, ttl, DEFAULT_BASE_URL.to_string())
+        Self::with_base_url(
+            api_key,
+            api_secret,
+            domain,
+            name,
+            ttl,
+            DEFAULT_BASE_URL.to_string(),
+        )
     }
 
     /// Create with custom base URL (for testing).

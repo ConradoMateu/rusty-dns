@@ -48,7 +48,13 @@ struct UpdateRequest {
 impl CloudflareProvider {
     /// Create a new Cloudflare provider.
     pub fn new(api_token: String, zone_id: String, record_name: String, proxied: bool) -> Self {
-        Self::with_base_url(api_token, zone_id, record_name, proxied, DEFAULT_BASE_URL.to_string())
+        Self::with_base_url(
+            api_token,
+            zone_id,
+            record_name,
+            proxied,
+            DEFAULT_BASE_URL.to_string(),
+        )
     }
 
     /// Create with custom base URL (for testing).

@@ -180,8 +180,10 @@ mod cloudflare_tests {
     async fn test_cloudflare_update_success() {
         let mock_server = MockServer::start().await;
 
-        let get_response = r#"{"success":true,"result":[{"id":"record-123","content":"1.1.1.1"}],"errors":[]}"#;
-        let patch_response = r#"{"success":true,"result":{"id":"record-123","content":"2.2.2.2"},"errors":[]}"#;
+        let get_response =
+            r#"{"success":true,"result":[{"id":"record-123","content":"1.1.1.1"}],"errors":[]}"#;
+        let patch_response =
+            r#"{"success":true,"result":{"id":"record-123","content":"2.2.2.2"},"errors":[]}"#;
 
         // Mock GET to find record ID
         Mock::given(method("GET"))
@@ -221,9 +223,10 @@ mod cloudflare_tests {
 
         Mock::given(method("GET"))
             .and(path_regex(r"/client/v4/zones/.*/dns_records.*"))
-            .respond_with(ResponseTemplate::new(200).set_body_string(
-                r#"{"success":true,"result":[],"errors":[]}"#,
-            ))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    .set_body_string(r#"{"success":true,"result":[],"errors":[]}"#),
+            )
             .mount(&mock_server)
             .await;
 
