@@ -6,6 +6,8 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::net::IpAddr;
 
+const DEFAULT_BASE_URL: &str = "https://api.cloudflare.com";
+
 /// Cloudflare DDNS provider.
 pub struct CloudflareProvider {
     client: reqwest::Client,
@@ -13,6 +15,7 @@ pub struct CloudflareProvider {
     zone_id: String,
     record_name: String,
     proxied: bool,
+    base_url: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -45,21 +48,32 @@ struct UpdateRequest {
 impl CloudflareProvider {
     /// Create a new Cloudflare provider.
     pub fn new(api_token: String, zone_id: String, record_name: String, proxied: bool) -> Self {
-        let client = reqwest::Client::new();
+        Self::with_base_url(api_token, zone_id, record_name, proxied, DEFAULT_BASE_URL.to_string())
+    }
+
+    /// Create with custom base URL (for testing).
+    pub fn with_base_url(
+        api_token: String,
+        zone_id: String,
+        record_name: String,
+        proxied: bool,
+        base_url: String,
+    ) -> Self {
         Self {
-            client,
+            client: reqwest::Client::new(),
             api_token,
             zone_id,
             record_name,
             proxied,
+            base_url,
         }
     }
 
     /// Get the DNS record ID.
     async fn get_record_id(&self) -> Result<(String, String)> {
         let url = format!(
-            "https://api.cloudflare.com/client/v4/zones/{}/dns_records?name={}",
-            self.zone_id, self.record_name
+            "{}/client/v4/zones/{}/dns_records?name={}",
+            self.base_url, self.zone_id, self.record_name
         );
 
         let response: CloudflareResponse<Vec<DnsRecord>> = self
@@ -115,8 +129,8 @@ impl DdnsProvider for CloudflareProvider {
         let (record_id, _) = self.get_record_id().await?;
 
         let url = format!(
-            "https://api.cloudflare.com/client/v4/zones/{}/dns_records/{}",
-            self.zone_id, record_id
+            "{}/client/v4/zones/{}/dns_records/{}",
+            self.base_url, self.zone_id, record_id
         );
 
         let record_type = if ip.is_ipv4() { "A" } else { "AAAA" };

@@ -6,6 +6,8 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::net::IpAddr;
 
+const DEFAULT_BASE_URL: &str = "https://api.godaddy.com";
+
 /// GoDaddy DDNS provider.
 pub struct GoDaddyProvider {
     client: reqwest::Client,
@@ -14,6 +16,7 @@ pub struct GoDaddyProvider {
     domain: String,
     name: String,
     ttl: u32,
+    base_url: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -41,14 +44,26 @@ impl GoDaddyProvider {
         name: String,
         ttl: u32,
     ) -> Self {
-        let client = reqwest::Client::new();
+        Self::with_base_url(api_key, api_secret, domain, name, ttl, DEFAULT_BASE_URL.to_string())
+    }
+
+    /// Create with custom base URL (for testing).
+    pub fn with_base_url(
+        api_key: String,
+        api_secret: String,
+        domain: String,
+        name: String,
+        ttl: u32,
+        base_url: String,
+    ) -> Self {
         Self {
-            client,
+            client: reqwest::Client::new(),
             api_key,
             api_secret,
             domain,
             name,
             ttl,
+            base_url,
         }
     }
 
@@ -77,8 +92,8 @@ impl DdnsProvider for GoDaddyProvider {
 
     async fn get_current_ip(&self) -> Result<Option<IpAddr>> {
         let url = format!(
-            "https://api.godaddy.com/v1/domains/{}/records/A/{}",
-            self.domain, self.name
+            "{}/v1/domains/{}/records/A/{}",
+            self.base_url, self.domain, self.name
         );
 
         let response = self
@@ -101,8 +116,8 @@ impl DdnsProvider for GoDaddyProvider {
 
         let record_type = if ip.is_ipv4() { "A" } else { "AAAA" };
         let url = format!(
-            "https://api.godaddy.com/v1/domains/{}/records/{}/{}",
-            self.domain, record_type, self.name
+            "{}/v1/domains/{}/records/{}/{}",
+            self.base_url, self.domain, record_type, self.name
         );
 
         let records = vec![UpdateRecord {
@@ -149,8 +164,8 @@ impl DdnsProvider for GoDaddyProvider {
 
     async fn validate(&self) -> Result<()> {
         let url = format!(
-            "https://api.godaddy.com/v1/domains/{}/records/A/{}",
-            self.domain, self.name
+            "{}/v1/domains/{}/records/A/{}",
+            self.base_url, self.domain, self.name
         );
 
         let response = self

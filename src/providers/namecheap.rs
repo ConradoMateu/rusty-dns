@@ -5,23 +5,31 @@ use crate::error::{DdnsError, Result};
 use async_trait::async_trait;
 use std::net::IpAddr;
 
+const DEFAULT_BASE_URL: &str = "https://dynamicdns.park-your-domain.com";
+
 /// Namecheap DDNS provider.
 pub struct NamecheapProvider {
     client: reqwest::Client,
     domain: String,
     host: String,
     password: String,
+    base_url: String,
 }
 
 impl NamecheapProvider {
     /// Create a new Namecheap provider.
     pub fn new(domain: String, host: String, password: String) -> Self {
-        let client = reqwest::Client::new();
+        Self::with_base_url(domain, host, password, DEFAULT_BASE_URL.to_string())
+    }
+
+    /// Create with custom base URL (for testing).
+    pub fn with_base_url(domain: String, host: String, password: String, base_url: String) -> Self {
         Self {
-            client,
+            client: reqwest::Client::new(),
             domain,
             host,
             password,
+            base_url,
         }
     }
 
@@ -51,8 +59,8 @@ impl DdnsProvider for NamecheapProvider {
 
     async fn update_ip(&self, ip: IpAddr) -> Result<UpdateResult> {
         let url = format!(
-            "https://dynamicdns.park-your-domain.com/update?host={}&domain={}&password={}&ip={}",
-            self.host, self.domain, self.password, ip
+            "{}/update?host={}&domain={}&password={}&ip={}",
+            self.base_url, self.host, self.domain, self.password, ip
         );
 
         let response = self.client.get(&url).send().await?;

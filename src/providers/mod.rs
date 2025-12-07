@@ -4,6 +4,8 @@ mod cloudflare;
 mod duckdns;
 mod godaddy;
 mod namecheap;
+#[cfg(test)]
+mod tests;
 
 pub use cloudflare::CloudflareProvider;
 pub use duckdns::DuckDnsProvider;
@@ -97,7 +99,7 @@ pub fn create_provider(config: &ProviderConfig) -> Box<dyn DdnsProvider> {
 }
 
 /// Resolve environment variable references (values starting with $).
-fn resolve_env(value: &str) -> String {
+pub fn resolve_env(value: &str) -> String {
     if let Some(var_name) = value.strip_prefix('$') {
         std::env::var(var_name).unwrap_or_else(|_| {
             tracing::warn!("Environment variable {} not set", var_name);

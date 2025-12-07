@@ -5,21 +5,29 @@ use crate::error::{DdnsError, Result};
 use async_trait::async_trait;
 use std::net::IpAddr;
 
+const DEFAULT_BASE_URL: &str = "https://www.duckdns.org";
+
 /// DuckDNS provider.
 pub struct DuckDnsProvider {
     client: reqwest::Client,
     domains: String,
     token: String,
+    base_url: String,
 }
 
 impl DuckDnsProvider {
     /// Create a new DuckDNS provider.
     pub fn new(domains: String, token: String) -> Self {
-        let client = reqwest::Client::new();
+        Self::with_base_url(domains, token, DEFAULT_BASE_URL.to_string())
+    }
+
+    /// Create with custom base URL (for testing).
+    pub fn with_base_url(domains: String, token: String, base_url: String) -> Self {
         Self {
-            client,
+            client: reqwest::Client::new(),
             domains,
             token,
+            base_url,
         }
     }
 
@@ -48,8 +56,8 @@ impl DdnsProvider for DuckDnsProvider {
 
     async fn update_ip(&self, ip: IpAddr) -> Result<UpdateResult> {
         let url = format!(
-            "https://www.duckdns.org/update?domains={}&token={}&ip={}",
-            self.domains, self.token, ip
+            "{}/update?domains={}&token={}&ip={}",
+            self.base_url, self.domains, self.token, ip
         );
 
         let response = self.client.get(&url).send().await?;
