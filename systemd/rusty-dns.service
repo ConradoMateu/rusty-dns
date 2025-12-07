@@ -1,0 +1,36 @@
+[Unit]
+Description=rusty-dns Dynamic DNS Client
+Documentation=https://github.com/conrado-mateu/rusty-dns
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+
+# Main executable
+ExecStart=/usr/local/bin/rusty-dns daemon
+
+# Restart on failure
+Restart=always
+RestartSec=10
+
+# Environment file for secrets (optional)
+# Create /etc/rusty-dns/env with:
+#   CF_API_TOKEN=your-token
+#   DUCKDNS_TOKEN=your-token
+EnvironmentFile=-/etc/rusty-dns/env
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ReadWritePaths=/var/lib/rusty-dns
+
+# Allow network access
+PrivateNetwork=false
+
+[Install]
+WantedBy=multi-user.target

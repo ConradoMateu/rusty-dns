@@ -1,0 +1,98 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+
+# Cargo
+Cargo.lock
+# Keep Cargo.lock if this is a binary (not a library)
+# Uncomment if you want to track it:
+# !Cargo.lock
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.dll
+*.a
+
+# Testing
+coverage/
+*.profdata
+*.profraw
+
+# Configuration files (may contain secrets)
+config/*.toml
+!config/default.toml
+!config/*.example.toml
+
+# Environment files (CRITICAL - never commit)
+.env
+.env.local
+.env.*.local
+*.env
+
+# API keys and tokens
+*_token
+*_key
+api_keys/
+tokens/
+secrets/
+
+# Cloudflare credentials
+cloudflare.toml
+cf_credentials.toml
+
+# Logs
+*.log
+logs/
+/logs/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+data/
+db/
+*.db
+*.sqlite
+*.sqlite3
+
+# DNS zone files (if generated)
+zones/
+*.zone
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# macOS
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+
+# Windows
+desktop.ini
+$RECYCLE.BIN/

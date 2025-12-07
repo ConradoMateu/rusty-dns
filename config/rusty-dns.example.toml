@@ -1,0 +1,77 @@
+# rusty-dns Configuration Example
+# Copy to ~/.config/rusty-dns/config.toml
+
+# Check interval in seconds (default: 300 = 5 minutes)
+check_interval_secs = 300
+
+# IP detection services (uses all by default, first successful response wins)
+ip_services = [
+    "https://api.ipify.org",
+    "https://icanhazip.com",
+    "https://ifconfig.me/ip",
+    "https://ipecho.net/plain"
+]
+
+# History settings
+[history]
+enabled = true
+max_entries = 100
+
+# ============================================================================
+# PROVIDERS - Uncomment and configure the ones you need
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Cloudflare
+# ----------------------------------------------------------------------------
+# Requires:
+# - API Token with Zone:DNS:Edit permission
+# - Zone ID from Cloudflare dashboard
+# - Existing A/AAAA record
+#
+# [[providers]]
+# type = "cloudflare"
+# api_token = "$CF_API_TOKEN"          # Environment variable reference
+# zone_id = "your-zone-id-here"
+# record_name = "vpn.example.com"
+# proxied = false                       # true to proxy through Cloudflare CDN
+
+# ----------------------------------------------------------------------------
+# Namecheap
+# ----------------------------------------------------------------------------
+# Requires:
+# - Domain with Dynamic DNS enabled
+# - Dynamic DNS password from Advanced DNS settings
+#
+# [[providers]]
+# type = "namecheap"
+# domain = "example.com"
+# host = "vpn"                          # Use "@" for root domain
+# password = "$NAMECHEAP_DDNS_PASSWORD"
+
+# ----------------------------------------------------------------------------
+# DuckDNS
+# ----------------------------------------------------------------------------
+# Requires:
+# - DuckDNS subdomain (without .duckdns.org)
+# - Token from duckdns.org
+#
+# [[providers]]
+# type = "duckdns"
+# domains = "mysubdomain"               # Multiple: "sub1,sub2,sub3"
+# token = "$DUCKDNS_TOKEN"
+
+# ----------------------------------------------------------------------------
+# GoDaddy
+# ----------------------------------------------------------------------------
+# Requires:
+# - API Key and Secret from developer.godaddy.com
+# - Production API access (not OTE/test environment)
+#
+# [[providers]]
+# type = "godaddy"
+# api_key = "$GODADDY_API_KEY"
+# api_secret = "$GODADDY_API_SECRET"
+# domain = "example.com"
+# name = "vpn"                          # Use "@" for root domain
+# ttl = 600                             # TTL in seconds (default: 600)
